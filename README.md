@@ -1,36 +1,165 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Re:Magic Merchant Game
 
-## Getting Started
+魔術書を売買して人間と魔物の勢力バランスを保つ商人シミュレーションゲーム。あなたは魔術商人として、両勢力の均衡を保ちながら商売を営むことになります。
 
-First, run the development server:
+## プロジェクト概要
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+このプロジェクトは、Next.js、TypeScript、Tailwind CSS、Framer Motionを使用した魔術商人シミュレーションゲームです。プレイヤーは魔術書の作成と販売を通じて、人間と魔物の勢力バランスに影響を与えながら利益を追求します。
+
+### 使用技術
+
+- **フレームワーク**: Next.js 14
+- **言語**: TypeScript
+- **スタイリング**: Tailwind CSS
+- **状態管理**: Zustand
+- **アニメーション**: Framer Motion
+- **アイコン**: Lucide React, Radix UI Icons
+- **開発ツール**: ESLint, PostCSS
+
+### ゲームの目的
+
+- 人間と魔物の勢力バランスを50%前後に保ちながら、利益を上げることが目的です
+- どちらかの勢力が0%または100%に達するとゲームオーバーとなります
+- 様々なイベントに対応しながら、商人としての評判を管理します
+
+## ゲームシステム
+
+### 1. 基本システム
+
+#### 勢力バランス
+- 人間勢力と魔物勢力の割合で表示
+- 両勢力のバランスが極端に偏るとゲームオーバー
+- 商品の販売先によって勢力バランスが変動
+
+#### 経済システム
+- 市場トレンドによる価格変動
+- 変動率（ボラティリティ）の管理
+- 季節による需要の変化
+
+#### 評判システム
+- 人間側と魔物側それぞれの評判
+- イベントでの選択による評判への影響
+- 評判による取引価格への影響
+
+### 2. イベントシステム
+
+#### イベントの種類
+- **政治イベント**: 和平会議など、勢力バランスに直接影響
+- **自然イベント**: 魔力の嵐など、市場に影響
+- **経済イベント**: 商人ギルド集会など、取引に影響
+- **社会イベント**: 魔術学院の設立など、長期的な影響
+- **魔法イベント**: 元素共鳴など、特定属性に影響
+
+#### イベントの特徴
+- 期間限定の効果
+- プレイヤーの選択による結果の分岐
+- 評判への影響
+- 市場価格への影響
+
+### 3. 魔術書システム
+
+#### 属性
+- **火属性**: 攻撃的、人間側で人気
+- **氷属性**: 防御的、安定した需要
+- **風属性**: 機動性、モンスター側で重宝
+- **土属性**: 堅実、両陣営で安定需要
+- **雷属性**: 高威力、高価格
+
+## プロジェクト構造
+
+```
+src/
+├── app/                   # Next.js アプリケーションルート
+├── components/            # Reactコンポーネント
+│   ├── game/             # ゲーム固有のコンポーネント
+│   ├── ui/               # 汎用UIコンポーネント
+│   └── shared/           # 共有コンポーネント
+├── constants/            # ゲーム定数
+│   ├── eventSystem.ts    # イベント関連の定数
+│   ├── magicSystem.ts    # 魔法システム関連の定数
+│   └── seasonSystem.ts   # 季節システム関連の定数
+├── hooks/                # カスタムフック
+├── lib/                  # ユーティリティ関数
+│   └── store/           # Zustandストア
+└── types/               # 型定義
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### コアコンポーネント
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **EventManager**: イベントの管理と表示
+- **EventDisplay**: イベント情報の表示
+- **EventEffectsDisplay**: イベント効果の視覚的表示
+- **GameHeader**: ゲーム状態の表示
+- **CraftingSystem**: 魔術書作成システム
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 状態管理
 
-## Learn More
+Zustandを使用して以下の状態を管理:
+- ゲームの基本状態（金額、時間など）
+- 勢力バランス
+- イベント状態
+- インベントリ
+- 評判システム
 
-To learn more about Next.js, take a look at the following resources:
+## セットアップ方法
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+# リポジトリのクローン
+git clone https://github.com/poposuke18/Re_magic-merchant-game.git
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+# プロジェクトディレクトリに移動
+cd Re_magic-merchant-game
 
-## Deploy on Vercel
+# 依存関係のインストール
+npm install
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+# 開発サーバーの起動
+npm run dev
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 開発ガイドライン
+
+### コーディング規約
+- TypeScriptの厳格な型チェックを維持
+- コンポーネントは機能ごとに分割
+- Tailwind CSSクラスの整理された使用
+- アニメーションはFramer Motionを使用
+
+### コミット規約
+```
+feat: 新機能の追加
+fix: バグ修正
+docs: ドキュメントのみの変更
+style: コードの意味に影響を与えない変更（空白、フォーマットなど）
+refactor: バグ修正や機能追加を含まないコードの変更
+perf: パフォーマンスを向上させるコードの変更
+test: テストの追加や既存のテストの修正
+chore: ビルドプロセスやツールの変更
+```
+
+## 今後の開発予定
+
+- [ ] セーブ/ロード機能の実装
+- [ ] イベント履歴システム
+- [ ] イベント間の関連性の実装
+- [ ] チュートリアルの実装
+- [ ] 実績システムの追加
+- [ ] サウンドエフェクトとBGM
+- [ ] モバイル対応の改善
+- [ ] 多言語対応
+
+## コントリビューション
+
+1. このリポジトリをフォーク
+2. 新しいブランチを作成 (`git checkout -b feature/awesome-feature`)
+3. 変更をコミット (`git commit -am 'Add awesome feature'`)
+4. ブランチをプッシュ (`git push origin feature/awesome-feature`)
+5. Pull Requestを作成
+
+## ライセンス
+
+MIT License
+
+## 作者
+
+[poposuke18](https://github.com/poposuke18)
