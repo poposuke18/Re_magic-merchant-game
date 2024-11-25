@@ -67,22 +67,66 @@
 
 ## プロジェクト構造
 
-```
 src/
-├── app/                   # Next.js アプリケーションルート
-├── components/            # Reactコンポーネント
-│   ├── game/             # ゲーム固有のコンポーネント
-│   ├── ui/               # 汎用UIコンポーネント
-│   └── shared/           # 共有コンポーネント
-├── constants/            # ゲーム定数
-│   ├── eventSystem.ts    # イベント関連の定数
-│   ├── magicSystem.ts    # 魔法システム関連の定数
-│   └── seasonSystem.ts   # 季節システム関連の定数
-├── hooks/                # カスタムフック
-├── lib/                  # ユーティリティ関数
-│   └── store/           # Zustandストア
-└── types/               # 型定義
-```
+├── app/
+│   ├── layout.tsx
+│   ├── page.tsx
+│   └── globals.css
+├── components/
+│   ├── game/
+│   │   ├── AutoProduction.tsx       # 自動生産システム
+│   │   ├── CraftingSystem.tsx       # クラフティングシステム
+│   │   ├── EventDisplay.tsx         # イベント表示
+│   │   ├── EventEffectsDisplay.tsx  # イベント効果表示
+│   │   ├── EventManager.tsx         # イベント管理
+│   │   ├── GameHeader.tsx           # ゲームヘッダー
+│   │   ├── GameOver.tsx            # ゲームオーバー画面
+│   │   ├── Inventory.tsx           # インベントリ
+│   │   └── StartScreen.tsx         # スタート画面
+│   ├── ui/
+│   │   ├── Button.tsx              # ボタンコンポーネント
+│   │   ├── Card.tsx                # カードコンポーネント
+│   │   ├── Dialog.tsx              # ダイアログコンポーネント
+│   │   ├── Progress.tsx            # プログレスバー
+│   │   └── Tooltip.tsx             # ツールチップ
+│   └── shared/
+│       ├── ElementIcon.tsx         # 属性アイコン
+│       ├── LoadingSpinner.tsx      # ローディング表示
+│       └── Notifications.tsx       # 通知システム
+├── constants/
+│   ├── eventSystem.ts              # イベントシステム定数
+│   ├── gameConfig.ts              # ゲーム設定
+│   ├── magicSystem.ts             # 魔法システム定数
+│   └── seasonSystem.ts            # 季節システム定数
+├── hooks/
+│   ├── useGame.ts                 # ゲーム状態管理
+│   ├── useCrafting.ts            # クラフト機能
+│   ├── useInventory.ts           # インベントリ管理
+│   ├── useGameTime.ts            # ゲーム内時間管理
+│   └── usePowerAnimation.ts      # パワーバーアニメーション
+├── lib/
+│   ├── store/
+│   │   ├── gameStore.ts          # メインゲームストア
+│   │   ├── craftingStore.ts      # クラフト状態管理
+│   │   └── types.ts              # ストア用型定義
+│   └── utils/
+│       ├── calculations.ts        # 計算ユーティリティ
+│       ├── animations.ts         # アニメーション設定
+│       └── formatters.ts         # フォーマット関数
+├── styles/
+│   └── globals.css               # グローバルスタイル
+└── types/
+    ├── game.d.ts                # ゲーム関連型定義
+    └── magic.d.ts               # 魔法システム型定義
+
+public/
+├── fonts/                      # フォントファイル
+├── images/                     # 画像ファイル
+└── sounds/                     # 音声ファイル（未実装）
+
+config/
+├── tailwind.config.js         # Tailwind設定
+└── postcss.config.js          # PostCSS設定
 
 ### コアコンポーネント
 
