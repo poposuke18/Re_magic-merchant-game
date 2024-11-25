@@ -1,6 +1,6 @@
 // src/components/game/EventEffectsDisplay.tsx
 import { motion } from 'framer-motion';
-import { TrendingUp, TrendingDown, Coins, Shield, Sword } from 'lucide-react';
+import { TrendingUp, TrendingDown, Coins, Shield} from 'lucide-react';
 import type { EventEffect } from '@/constants/eventSystem';
 
 interface EventEffectsDisplayProps {
@@ -15,7 +15,7 @@ interface EventEffectsDisplayProps {
     colorClass?: string;
   }
 
-  export default function EventEffectsDisplay({ effects, isPreview = false }: EventEffectsDisplayProps) {
+  export default function EventEffectsDisplay({ effects }: EventEffectsDisplayProps) {
     const EffectIndicator = ({ 
       value, 
       icon, 
