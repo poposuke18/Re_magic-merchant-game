@@ -1,29 +1,40 @@
 // src/constants/eventSystem.ts
-import { GameState } from '@/lib/store/types';
+import type { GameState, Element  } from '@/types/game';
 
 export type EventCategory = 'POLITICAL' | 'NATURAL' | 'ECONOMIC' | 'SOCIAL' | 'MAGICAL';
 export type EventTrigger = 'TIME' | 'CONDITION' | 'RANDOM' | 'PLAYER_ACTION';
 export type EventDuration = 'INSTANT' | 'TEMPORARY' | 'PERMANENT';
-export type ElementType = 'FIRE' | 'ICE' | 'WIND' | 'EARTH' | 'LIGHTNING';
-
-export interface EventChoice {
-    id: string;
-    text: string;
-    condition?: (state: GameState) => boolean;
-    effects: {
-      immediate: (state: GameState) => Partial<GameState>;
-      reputation?: {
-        human: number;
-        monster: number;
-      };
-    };
-  }
 
 export interface EventEffect {
   gold?: number;
   humanPower?: number;
   marketTrend?: number;
-  elementBonus?: Partial<Record<ElementType, number>>;
+  volatility?: number;
+  elementBonus?: Partial<Record<Element, number>>;
+  reputation?: {
+    human: number;
+    monster: number;
+  };
+}
+
+export interface EventChoice {
+  id: string;
+  text: string;
+  condition?: (state: GameState) => boolean;
+  effects: {
+    immediate: (state: GameState) => Partial<GameState>;
+    reputation?: {
+      human: number;
+      monster: number;
+    };
+  };
+}
+
+export interface EventEffect {
+  gold?: number;
+  humanPower?: number;
+  marketTrend?: number;
+  elementBonus?: Partial<Record<Element, number>>;
   reputation?: {
     human: number;
     monster: number;
@@ -47,7 +58,7 @@ export interface GameEvent {
     end?: (state: GameState) => Partial<GameState>;
   };
   choices?: EventChoice[];
-  elementEffects?: Partial<Record<ElementType, number>>;
+  elementEffects?: Partial<Record<Element, number>>;
 }
 
 export const EVENTS: Record<string, GameEvent> = {
@@ -59,7 +70,7 @@ export const EVENTS: Record<string, GameEvent> = {
     category: 'POLITICAL',
     trigger: 'CONDITION',
     duration: 'TEMPORARY',
-    durationValue: 5,
+    durationValue: 2,
     condition: (state) => Math.abs(state.humanPower - 50) < 10,
     weight: 1.2,
     effects: {
@@ -111,7 +122,7 @@ export const EVENTS: Record<string, GameEvent> = {
     category: 'MAGICAL',
     trigger: 'RANDOM',
     duration: 'TEMPORARY',
-    durationValue: 7,
+    durationValue: 3,
     weight: 0.8,
     effects: {
       ongoing: (state) => ({
@@ -154,7 +165,7 @@ export const EVENTS: Record<string, GameEvent> = {
     category: 'ECONOMIC',
     trigger: 'TIME',
     duration: 'TEMPORARY',
-    durationValue: 3,
+    durationValue: 1,
     weight: 1.0,
     effects: {
       ongoing: (state) => ({
@@ -193,7 +204,7 @@ export const EVENTS: Record<string, GameEvent> = {
     category: 'NATURAL',
     trigger: 'RANDOM',
     duration: 'TEMPORARY',
-    durationValue: 4,
+    durationValue: 2,
     weight: 1.5,
     elementEffects: {
       WIND: 2.0,

@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "check": "npm run typecheck && npm run lint"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
@@ -27,6 +29,6 @@
     "eslint-config-next": "14.2.18",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
-    "typescript": "^5"
+    "typescript":"~5.6.2"
   }
 }

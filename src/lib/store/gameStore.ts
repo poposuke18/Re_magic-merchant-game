@@ -1,37 +1,58 @@
 // src/lib/store/gameStore.ts
+
 import { create } from 'zustand';
-import { GameState, InventoryItem } from './types';
-import { TIME_CONSTANTS } from '@/constants/seasonSystem';
+import { TIME_CONSTANTS } from '@/constants/timeConstants';
+import type { 
+  GameState, 
+  GameStore, 
+  ProductionSlot, 
+  Material, 
+  MagicBook 
+} from '@/types/game.d';
 
 const INITIAL_STATE: GameState = {
   gameStarted: false,
+  gameOver: false,
   gold: 1500,
-  humanPower: 20,
-  monsterPower: 80,
+  humanPower: 50,
+  monsterPower: 50,
   marketTrend: 0,
   volatility: 0.2,
   inventory: [],
   elapsedTime: 0,
-  currentSeason: 'SUMMER',
+  currentSeason: 'SPRING',
   dayCount: 0,
   yearCount: 1,
-  activeSeasonalEvents: [],
   weatherCondition: 'CLEAR',
   reputation: {
     human: 50,
     monster: 50
+  },
+  productionSlots: [
+    {
+      id: 1,
+      element: 'FIRE',
+      active: false,
+      progress: 0,
+      timeRemaining: 0,
+      level: 1,
+      materials: 0
+    },
+    {
+      id: 2,
+      element: 'ICE',
+      active: false,
+      progress: 0,
+      timeRemaining: 0,
+      level: 1,
+      materials: 0
+    }
+  ],
+  productionUpgrades: {
+    speed: 1,
+    quality: 1,
+    slots: 2,
   }
-};
-
-type GameStore = GameState & {
-  startGame: () => void;
-  resetGame: () => void;
-  updateGold: (amount: number) => void;
-  updatePower: (humanPower: number) => void;
-  addToInventory: (item: InventoryItem) => void;
-  updateMarket: () => void;
-  updateTime: () => void;
-  updateGameState: (partialState: Partial<GameState>) => void;
 };
 
 export const useGameStore = create<GameStore>((set) => ({
@@ -41,28 +62,44 @@ export const useGameStore = create<GameStore>((set) => ({
   
   resetGame: () => set(INITIAL_STATE),
   
-  updateGold: (amount) => set((state) => ({
+  setGameOver: (value: boolean) => set({ gameOver: value }),
+  
+  updateGold: (amount: number) => set((state) => ({
     gold: state.gold + amount
   })),
   
-  updatePower: (humanPower) => set((state) => {
-    if (state.humanPower === humanPower) return {};
-    return {
-      humanPower,
-      monsterPower: 100 - humanPower
-    };
+  updatePower: (humanPower: number) => set({
+    humanPower,
+    monsterPower: 100 - humanPower
   }),
+
+  updateReputation: (change: { human: number; monster: number }) => set((state) => ({
+    reputation: {
+      human: Math.min(100, Math.max(0, state.reputation.human + change.human)),
+      monster: Math.min(100, Math.max(0, state.reputation.monster + change.monster))
+    }
+  })),
   
-  addToInventory: (item) => set((state) => ({
+  addToInventory: (item: MagicBook | Material) => set((state) => ({
     inventory: [...state.inventory, item]
   })),
+
+  removeFromInventory: (itemId: string) => set((state) => ({
+    inventory: state.inventory.filter(item => item.id !== itemId)
+  })),
+
+  updateInventory: (newInventory: (MagicBook | Material)[]) => set({
+    inventory: newInventory
+  }),
   
   updateMarket: () => set((state) => {
     const randomChange = (Math.random() - 0.5) * 0.4;
     const newMarketTrend = Math.max(-0.5, Math.min(0.5, state.marketTrend + randomChange));
     const newVolatility = Math.max(0.1, Math.min(0.4, state.volatility * (1 + (Math.random() - 0.5) * 0.1)));
     
-    if (state.marketTrend === newMarketTrend && state.volatility === newVolatility) return {};
+    if (state.marketTrend === newMarketTrend && state.volatility === newVolatility) {
+      return {};
+    }
     
     return {
       marketTrend: newMarketTrend,
@@ -79,13 +116,13 @@ export const useGameStore = create<GameStore>((set) => ({
     const seasons = ['SPRING', 'SUMMER', 'AUTUMN', 'WINTER'] as const;
     const currentSeasonIndex = newSeasonCount % 4;
     
-    // 変更がない場合は更新しない
-    if (
+    const noChanges = 
       state.elapsedTime === newElapsedTime &&
       state.dayCount === newDayCount % TIME_CONSTANTS.DAYS_PER_SEASON &&
       state.yearCount === newYearCount + 1 &&
-      state.currentSeason === seasons[currentSeasonIndex]
-    ) {
+      state.currentSeason === seasons[currentSeasonIndex];
+    
+    if (noChanges) {
       return {};
     }
 
@@ -97,14 +134,28 @@ export const useGameStore = create<GameStore>((set) => ({
     };
   }),
 
-  updateGameState: (partialState) => set((state) => {
-    // 変更がない場合は更新しない
+  updateGameState: (partialState: Partial<GameState>) => set((state) => {
     const hasChanges = Object.entries(partialState).some(
       ([key, value]) => state[key as keyof GameState] !== value
     );
     
-    if (!hasChanges) return {};
+    if (!hasChanges) {
+      return {};
+    }
     
     return { ...state, ...partialState };
-  })
+  }),
+
+  updateProductionSlot: (slotId: number, updates: Partial<ProductionSlot>) => set((state) => ({
+    productionSlots: state.productionSlots.map(slot =>
+      slot.id === slotId ? { ...slot, ...updates } : slot
+    )
+  })),
+
+  upgradeProduction: (type: keyof GameState['productionUpgrades']) => set((state) => ({
+    productionUpgrades: {
+      ...state.productionUpgrades,
+      [type]: state.productionUpgrades[type] + 1
+    }
+  })),
 }));
